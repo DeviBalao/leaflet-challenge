@@ -5,10 +5,7 @@ let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 
 // Perform a GET request to the query URL.
 d3.json(queryUrl).then(function (data) {
-  console.log(data.features);
-  // Using the features array sent back in the API data, create a GeoJSON layer, and add it to the map.
-
-  // 1.
+  //console.log(data.features);
   // Pass the features to a createMap() function:
   createMap(data.features);
 
@@ -28,14 +25,27 @@ function createMap(featuresData){
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
-    // Function to return color based on the depth of earthquake
+    // Define the array of colors 
+    let colors = ["green","lightgreen","yellow","orange","red","darkred"]
+    //Define the array of limits
+    let limits = [-10,10,30,50,70,90]
+
+    // Function to return color based on the depth (in KM) of earthquake
     function markerColor (depthValue){
-        if( depthValue > 90) {return "darkred"}
-        else if(depthValue > 70 && depthValue <= 90){ return "red" }
-        else if (depthValue > 50 && depthValue <= 70){ return "orange" }
-        else if (depthValue > 30 && depthValue <= 50){ return "yellow" }
-        else if (depthValue > 10 && depthValue <= 30){ return "lightgreen" }
-        else return "green"
+        //Depth greater than 90
+        if( depthValue > limits[5]) {return colors[5]}
+        //Depth 70-90 
+        else if(depthValue > limits[4] && depthValue <= limits[5]){ return colors[4] }
+        //Depth 50-70
+        else if (depthValue > limits[3] && depthValue <= limits[4]){ return colors[3] }
+        //Depth 30-50
+        else if (depthValue > limits[2] && depthValue <= limits[3]){ return colors[2] }
+        //Depth 10-30
+        else if (depthValue > limits[1] && depthValue <= limits[2]){ return colors[1] }
+        //Depth -10-10
+        else if (depthValue > limits[0] && depthValue <= limits[1]){ return colors[0] }
+        //Depth less than -10
+        else {return "gray"}
     }
     //Add the markers
     featuresData.forEach(element => {
