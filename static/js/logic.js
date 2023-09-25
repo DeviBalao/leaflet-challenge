@@ -1,6 +1,6 @@
 // Store our geojson link as queryUrl.
-//let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
-let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
+//let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 
 // Perform a GET request to the query URL.
@@ -63,9 +63,29 @@ function createMap(featuresData){
         }
         ).bindPopup(`<h4>${element.properties.title} at depth ${depth} KM</h4>`)
         .addTo(myMap)
-    
     });
 
+        // Set up the legend
+        let legend = L.control({ position: "bottomright" });
+        legend.onAdd = function() {
+            let div = L.DomUtil.create("div", "info legend");
+            let legendLimits = limits;
+            let legendColors = colors;
+            let labels = [];            
 
+            // Add the minimum and maximum.
+             let legendInfo = "<h3>Earthquake Depth in KM</h3>"; //+ <div id =\" divsize\" >";
+             div.innerHTML = legendInfo;
+
+            legendLimits.forEach(function(limit, index) {
+            labels.push("<li style=\"background-color: " + legendColors[index] + "\">" + "<b>"+  limit + " + </b></li>");
+            });
+
+            div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+            return div;
+        };
+
+    // Adding the legend to the map
+    legend.addTo(myMap);
 
 }
