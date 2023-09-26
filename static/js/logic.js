@@ -4,8 +4,7 @@ let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_we
 
 
 // Perform a GET request to the query URL.
-d3.json(queryUrl).then(function (data) {
-  //console.log(data.features);
+d3.json(queryUrl).then(function (data) {  
   // Pass the features to a createMap() function:
   createMap(data.features);
 
@@ -73,14 +72,20 @@ function createMap(featuresData){
             let legendColors = colors;
             let labels = [];            
 
-            // Add the minimum and maximum.
-             let legendInfo = "<h3>Earthquake Depth in KM</h3>"; //+ <div id =\" divsize\" >";
+            // Legend Title
+             let legendInfo = "<h3>Earthquake Depth in KM</h3>"; 
              div.innerHTML = legendInfo;
-
-            legendLimits.forEach(function(limit, index) {
-            labels.push("<li style=\"background-color: " + legendColors[index] + "\">" + "<b>"+  limit + " + </b></li>");
-            });
-
+             
+            // Set legend values
+            for (let i=0; i < legendLimits.length; i++ )
+            {
+                if (i == (legendLimits.length -1))
+                { labels.push("<li style=\"background-color: " + legendColors[i] + "\">" + "<b>"+  legendLimits[i] + "\+" + " </b></li>");
+                }
+                else
+                {labels.push("<li style=\"background-color: " + legendColors[i] + "\">" + "<b>"+  legendLimits[i]  + " - " + legendLimits[i+1] + "</b></li>");
+                }
+            }
             div.innerHTML += "<ul>" + labels.join("") + "</ul>";
             return div;
         };
