@@ -10,6 +10,34 @@ d3.json(queryUrl).then(function (data) {
 
 });
 
+// To set markerSize based on the magnitude of the earthquake
+function markerSize(magnitude){
+    return magnitude * 50000;
+}
+
+// Define the array of colors for legend
+var colors = ["green","lightgreen","yellow","orange","red","darkred"];
+//Define the array of limits for legend
+var limits = [-10,10,30,50,70,90]
+
+// Function to return color based on the depth (in KM) of earthquake (for legend)
+function markerColor (depthValue){
+    //Depth greater than 90
+    if( depthValue > limits[5]) {return colors[5]}
+    //Depth 70-90 
+    else if(depthValue > limits[4] && depthValue <= limits[5]){ return colors[4] }
+    //Depth 50-70
+    else if (depthValue > limits[3] && depthValue <= limits[4]){ return colors[3] }
+    //Depth 30-50
+    else if (depthValue > limits[2] && depthValue <= limits[3]){ return colors[2] }
+    //Depth 10-30
+    else if (depthValue > limits[1] && depthValue <= limits[2]){ return colors[1] }
+    //Depth -10-10
+    else if (depthValue > limits[0] && depthValue <= limits[1]){ return colors[0] }
+    //Depth less than -10
+    else {return "gray"}
+}
+
 function createMap(featuresData){
 
     //Get the coordinates of first element to set the center point
@@ -24,28 +52,6 @@ function createMap(featuresData){
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(myMap);
 
-    // Define the array of colors 
-    let colors = ["green","lightgreen","yellow","orange","red","darkred"]
-    //Define the array of limits
-    let limits = [-10,10,30,50,70,90]
-
-    // Function to return color based on the depth (in KM) of earthquake
-    function markerColor (depthValue){
-        //Depth greater than 90
-        if( depthValue > limits[5]) {return colors[5]}
-        //Depth 70-90 
-        else if(depthValue > limits[4] && depthValue <= limits[5]){ return colors[4] }
-        //Depth 50-70
-        else if (depthValue > limits[3] && depthValue <= limits[4]){ return colors[3] }
-        //Depth 30-50
-        else if (depthValue > limits[2] && depthValue <= limits[3]){ return colors[2] }
-        //Depth 10-30
-        else if (depthValue > limits[1] && depthValue <= limits[2]){ return colors[1] }
-        //Depth -10-10
-        else if (depthValue > limits[0] && depthValue <= limits[1]){ return colors[0] }
-        //Depth less than -10
-        else {return "gray"}
-    }
     //Add the markers
     featuresData.forEach(element => {
         let lon = element.geometry.coordinates[0];
@@ -54,11 +60,11 @@ function createMap(featuresData){
 
         L.circle([lat,lon],
         {
-            radius: element.properties.mag *30000,
+            radius: markerSize(element.properties.mag),
             color: "black",
             weight:0.2,
             fillColor:markerColor(depth) ,
-            fillOpacity: 0.5,            
+            fillOpacity: 0.7,            
         }
         ).bindPopup(`<h4>${element.properties.title} at depth ${depth} KM</h4>`)
         .addTo(myMap)
@@ -94,3 +100,4 @@ function createMap(featuresData){
     legend.addTo(myMap);
 
 }
+
