@@ -2,7 +2,6 @@
 let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
 //let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
-
 // Perform a GET request to the query URL.
 d3.json(queryUrl).then(function (data) {  
   // Pass the features to a createMap() function:
@@ -12,7 +11,14 @@ d3.json(queryUrl).then(function (data) {
 
 // To set markerSize based on the magnitude of the earthquake
 function markerSize(magnitude){
-    return magnitude * 50000;
+    
+    if(magnitude == 0)
+    { return 1; }
+    else
+    {
+        let msize = magnitude * 35000;    
+        return msize;
+    }
 }
 
 // Define the array of colors for legend
@@ -56,8 +62,8 @@ function createMap(featuresData){
     featuresData.forEach(element => {
         let lon = element.geometry.coordinates[0];
         let lat = element.geometry.coordinates[1];
-        let depth = element.geometry.coordinates[2];        
-
+        let depth = element.geometry.coordinates[2];     
+        
         L.circle([lat,lon],
         {
             radius: markerSize(element.properties.mag),
